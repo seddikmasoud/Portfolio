@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Seddik Masoud — Engineering Portfolio</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0c10;
+    --surface: #111318;
+    --surface2: #181c24;
+    --border: #1e2430;
+    --accent: #00e5ff;
+    --accent2: #7c4dff;
+    --accent3: #00e676;
+    --text: #e8eaf0;
+    --muted: #6b7280;
+    --card-bg: #13171f;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,229,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,229,255,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    max-width: 860px;
+    width: 100%;
+    padding: 60px 24px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* HEADER */
+  .header {
+    text-align: center;
+    margin-bottom: 64px;
+  }
+
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(0,229,255,0.08);
+    border: 1px solid rgba(0,229,255,0.2);
+    color: var(--accent);
+    font-size: 11px;
+    letter-spacing: 2px;
+    padding: 6px 16px;
+    border-radius: 2px;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+  }
+
+  .tag::before {
+    content: '';
+    width: 6px; height: 6px;
+    background: var(--accent);
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.2; }
+  }
+
+  h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(36px, 6vw, 64px);
+    font-weight: 800;
+    letter-spacing: -1px;
+    line-height: 1.05;
+    margin-bottom: 16px;
+  }
+
+  h1 span {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .subtitle {
+    font-size: 14px;
+    color: var(--muted);
+    margin-bottom: 8px;
+    letter-spacing: 0.5px;
+  }
+
+  .contact-row {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    flex-wrap: wrap;
+    margin-top: 20px;
+  }
+
+  .contact-link {
+    font-size: 12px;
+    color: var(--muted);
+    text-decoration: none;
+    letter-spacing: 0.5px;
+    transition: color 0.2s;
+  }
+
+  .contact-link:hover { color: var(--accent); }
+
+  /* PROJECTS */
+  .section-label {
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--accent2);
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .projects-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .project-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 28px 32px;
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    transition: border-color 0.2s, transform 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .project-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    transition: opacity 0.2s;
+    opacity: 0;
+  }
+
+  .project-card.light::before { background: linear-gradient(90deg, #ffd600, #ff9100); }
+  .project-card.pulse::before { background: linear-gradient(90deg, #ff6b6b, #7c4dff); }
+  .project-card.hospital::before { background: linear-gradient(90deg, var(--accent), var(--accent2)); }
+
+  .project-card:hover {
+    transform: translateY(-2px);
+  }
+
+  .project-card.light:hover { border-color: rgba(255,214,0,0.3); }
+  .project-card.pulse:hover { border-color: rgba(255,107,107,0.3); }
+  .project-card.hospital:hover { border-color: rgba(0,229,255,0.3); }
+
+  .project-card:hover::before { opacity: 1; }
+
+  .project-left { flex: 1; }
+
+  .project-num {
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+
+  .project-name {
+    font-family: 'Syne', sans-serif;
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--text);
+    margin-bottom: 8px;
+    line-height: 1.2;
+  }
+
+  .project-desc {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.6;
+    max-width: 500px;
+  }
+
+  .project-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 14px;
+  }
+
+  .ptag {
+    font-size: 10px;
+    padding: 3px 10px;
+    border-radius: 2px;
+    letter-spacing: 0.5px;
+    border: 1px solid;
+  }
+
+  .ptag.yellow { background: rgba(255,214,0,0.08); border-color: rgba(255,214,0,0.25); color: #ffd600; }
+  .ptag.red { background: rgba(255,107,107,0.08); border-color: rgba(255,107,107,0.25); color: #ff9a9a; }
+  .ptag.cyan { background: rgba(0,229,255,0.08); border-color: rgba(0,229,255,0.25); color: var(--accent); }
+  .ptag.green { background: rgba(0,230,118,0.08); border-color: rgba(0,230,118,0.25); color: var(--accent3); }
+  .ptag.purple { background: rgba(124,77,255,0.08); border-color: rgba(124,77,255,0.25); color: #b39ddb; }
+
+  .project-arrow {
+    font-size: 24px;
+    color: var(--muted);
+    flex-shrink: 0;
+    transition: color 0.2s, transform 0.2s;
+  }
+
+  .project-card:hover .project-arrow {
+    transform: translateX(4px);
+  }
+
+  .project-card.light:hover .project-arrow { color: #ffd600; }
+  .project-card.pulse:hover .project-arrow { color: #ff6b6b; }
+  .project-card.hospital:hover .project-arrow { color: var(--accent); }
+
+  /* FOOTER */
+  .footer {
+    text-align: center;
+    margin-top: 64px;
+    padding-top: 32px;
+    border-top: 1px solid var(--border);
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 1px;
+  }
+
+  /* FADE */
+  .fade-in {
+    opacity: 0;
+    transform: translateY(16px);
+    animation: fadeUp 0.5s ease forwards;
+  }
+
+  @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+  .fade-in:nth-child(1) { animation-delay: 0.1s; }
+  .fade-in:nth-child(2) { animation-delay: 0.25s; }
+  .fade-in:nth-child(3) { animation-delay: 0.4s; }
+  .fade-in:nth-child(4) { animation-delay: 0.55s; }
+
+  @media (max-width: 600px) {
+    .project-card { flex-direction: column; align-items: flex-start; padding: 20px; }
+    .project-arrow { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- HEADER -->
+  <div class="header fade-in">
+    <div class="tag">Engineering Portfolio</div>
+    <h1>Seddik <span>Masoud</span></h1>
+    <p class="subtitle">Systems & Electrical Engineer · Product Engineering Focus</p>
+    <div class="contact-row">
+      <a href="mailto:seddikmasoud@gmail.com" class="contact-link">seddikmasoud@gmail.com</a>
+      <a href="https://linkedin.com/in/seddikmasoud" class="contact-link" target="_blank">linkedin.com/in/seddikmasoud</a>
+    </div>
+  </div>
+
+  <!-- PROJECTS -->
+  <div class="section-label fade-in">Selected Projects</div>
+
+  <div class="projects-grid">
+
+    <a href="smart_light_portfolio.html" class="project-card light fade-in">
+      <div class="project-left">
+        <div class="project-num">Project 01 · Personal R&D — Industrial Adoption</div>
+        <div class="project-name">Smart Adjustable LED Lighting System</div>
+        <div class="project-desc">Two hardware variants — tunable white (2700K–6500K) and full-colour WW+RGB — with multi-channel MOSFET driver design, mobile app control, and AI scheduling. Later adopted at EISAC Automation for commercial use.</div>
+        <div class="project-tags">
+          <span class="ptag yellow">LED Driver Design</span>
+          <span class="ptag yellow">IRF530N · IR2112</span>
+          <span class="ptag yellow">ESP32</span>
+          <span class="ptag green">Industrially Adopted</span>
+          <span class="ptag yellow">CRI &gt; 80</span>
+        </div>
+      </div>
+      <div class="project-arrow">→</div>
+    </a>
+
+    <a href="smart_hospital_portfolio.html" class="project-card hospital fade-in">
+      <div class="project-left">
+        <div class="project-num">Project 02 · Academic — Smart City Relevance</div>
+        <div class="project-name">Smart Hospital Automation System</div>
+        <div class="project-desc">12 integrated subsystems on Arduino — occupancy-based lighting, solar tracking, fire suppression, access control, and biosignal acquisition. Outcomes directly applicable to smart city lighting infrastructure.</div>
+        <div class="project-tags">
+          <span class="ptag cyan">Arduino UNO</span>
+          <span class="ptag cyan">PIR · Ultrasonic</span>
+          <span class="ptag cyan">12 Subsystems</span>
+          <span class="ptag green">Smart Lighting</span>
+          <span class="ptag cyan">Bluetooth IoT</span>
+        </div>
+      </div>
+      <div class="project-arrow">→</div>
+    </a>
+
+    <a href="wrist_pulse_portfolio.html" class="project-card pulse fade-in">
+      <div class="project-left">
+        <div class="project-num">Project 03 · Graduation Project — Full Product Lifecycle</div>
+        <div class="project-name">Wrist Pulse Signal Acquisition System</div>
+        <div class="project-desc">Wearable IoT device for real-time PPG signal acquisition — ESP32 + MAX30102 + OLED + Flutter app + custom PCB + 3D-printed enclosure. 36% BOM cost reduction vs. commercial equivalents.</div>
+        <div class="project-tags">
+          <span class="ptag red">ESP32 · MAX30102</span>
+          <span class="ptag red">Custom PCB</span>
+          <span class="ptag red">Flutter App</span>
+          <span class="ptag purple">BOM Costing</span>
+          <span class="ptag green">36% Cost Saving</span>
+        </div>
+      </div>
+      <div class="project-arrow">→</div>
+    </a>
+
+  </div>
+
+  <div class="footer">
+    Seddik Masoud · Systems & Electrical Engineer · 2024–2025
+  </div>
+
+</div>
+
+</body>
+</html>

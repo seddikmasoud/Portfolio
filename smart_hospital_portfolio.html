@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Smart Hospital Automation — Seddik Masoud</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0c10;
+    --surface: #111318;
+    --surface2: #181c24;
+    --border: #1e2430;
+    --accent: #00e5ff;
+    --accent2: #7c4dff;
+    --accent3: #00e676;
+    --text: #e8eaf0;
+    --muted: #6b7280;
+    --card-bg: #13171f;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    overflow-x: hidden;
+  }
+
+  /* GRID BACKGROUND */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,229,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,229,255,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 0 24px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* HERO */
+  .hero {
+    padding: 80px 0 60px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(0,229,255,0.08);
+    border: 1px solid rgba(0,229,255,0.2);
+    color: var(--accent);
+    font-size: 11px;
+    letter-spacing: 2px;
+    padding: 6px 14px;
+    border-radius: 2px;
+    text-transform: uppercase;
+    margin-bottom: 28px;
+  }
+
+  .tag::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    background: var(--accent);
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(36px, 6vw, 60px);
+    font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -1px;
+    margin-bottom: 20px;
+  }
+
+  h1 span {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero-meta {
+    display: flex;
+    gap: 32px;
+    flex-wrap: wrap;
+    margin-top: 32px;
+  }
+
+  .meta-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .meta-label {
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .meta-value {
+    font-size: 14px;
+    color: var(--accent);
+    font-weight: 500;
+  }
+
+  /* OVERVIEW */
+  .section {
+    padding: 56px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .section-label {
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--accent2);
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .overview-text {
+    font-size: 15px;
+    line-height: 1.8;
+    color: #9ca3af;
+    max-width: 720px;
+  }
+
+  .highlight {
+    color: var(--accent);
+    font-weight: 500;
+  }
+
+  /* SCHRÉDER CALLOUT */
+  .callout {
+    margin-top: 28px;
+    padding: 20px 24px;
+    background: rgba(0,230,118,0.05);
+    border: 1px solid rgba(0,230,118,0.2);
+    border-left: 3px solid var(--accent3);
+    border-radius: 4px;
+    font-size: 13px;
+    color: var(--accent3);
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+
+  .callout-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+
+  /* SYSTEMS GRID */
+  .systems-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-top: 8px;
+  }
+
+  .system-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 20px;
+    transition: border-color 0.2s, transform 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .system-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), transparent);
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  .system-card:hover {
+    border-color: rgba(0,229,255,0.3);
+    transform: translateY(-2px);
+  }
+
+  .system-card:hover::before { opacity: 1; }
+
+  .system-card.featured {
+    border-color: rgba(0,229,255,0.25);
+    background: rgba(0,229,255,0.04);
+  }
+
+  .system-card.featured::before { opacity: 1; }
+
+  .system-num {
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+
+  .system-name {
+    font-family: 'Syne', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 8px;
+  }
+
+  .system-sensor {
+    font-size: 11px;
+    color: var(--accent);
+    margin-bottom: 10px;
+    letter-spacing: 0.5px;
+  }
+
+  .system-desc {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  .relevance-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: rgba(0,230,118,0.1);
+    color: var(--accent3);
+    border: 1px solid rgba(0,230,118,0.25);
+    font-size: 10px;
+    padding: 3px 8px;
+    border-radius: 2px;
+    margin-top: 10px;
+    letter-spacing: 0.5px;
+  }
+
+  /* TECH STACK */
+  .tech-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 8px;
+  }
+
+  .tech-pill {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-size: 12px;
+    padding: 6px 14px;
+    border-radius: 3px;
+    letter-spacing: 0.5px;
+  }
+
+  .tech-pill.primary {
+    background: rgba(124,77,255,0.1);
+    border-color: rgba(124,77,255,0.3);
+    color: #b39ddb;
+  }
+
+  /* DIAGRAM SECTION */
+  .architecture {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 32px;
+    margin-top: 8px;
+    font-size: 13px;
+  }
+
+  .arch-row {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    margin-bottom: 0;
+    flex-wrap: wrap;
+  }
+
+  .arch-node {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    padding: 10px 16px;
+    border-radius: 4px;
+    font-size: 12px;
+    color: var(--text);
+    text-align: center;
+    white-space: nowrap;
+  }
+
+  .arch-node.central {
+    background: rgba(0,229,255,0.08);
+    border-color: rgba(0,229,255,0.3);
+    color: var(--accent);
+    font-weight: 600;
+    padding: 12px 20px;
+    font-family: 'Syne', sans-serif;
+  }
+
+  .arch-arrow {
+    color: var(--muted);
+    font-size: 18px;
+    margin: 0 8px;
+  }
+
+  .arch-cluster {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  /* OUTCOMES */
+  .outcomes-list {
+    list-style: none;
+    margin-top: 8px;
+  }
+
+  .outcomes-list li {
+    display: flex;
+    gap: 14px;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 14px;
+    color: #9ca3af;
+    line-height: 1.6;
+    align-items: flex-start;
+  }
+
+  .outcomes-list li:last-child { border-bottom: none; }
+
+  .outcome-icon {
+    color: var(--accent);
+    font-size: 16px;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  /* FOOTER */
+  .portfolio-footer {
+    padding: 40px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
+  .author-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .author-name {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 18px;
+  }
+
+  .author-contact {
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  .project-id {
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 2px;
+  }
+
+  /* FADE IN ANIMATION */
+  .fade-in {
+    opacity: 0;
+    transform: translateY(16px);
+    animation: fadeUp 0.6s ease forwards;
+  }
+
+  @keyframes fadeUp {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .fade-in:nth-child(1) { animation-delay: 0.1s; }
+  .fade-in:nth-child(2) { animation-delay: 0.2s; }
+  .fade-in:nth-child(3) { animation-delay: 0.3s; }
+  .fade-in:nth-child(4) { animation-delay: 0.4s; }
+
+  @media (max-width: 600px) {
+    .hero { padding: 48px 0 40px; }
+    .hero-meta { gap: 20px; }
+    .systems-grid { grid-template-columns: 1fr; }
+    .architecture { padding: 20px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="tag">Portfolio — Project 01</div>
+    <h1 class="fade-in">Smart <span>Hospital</span><br>Automation System</h1>
+    <div class="hero-meta fade-in">
+      <div class="meta-item">
+        <span class="meta-label">Type</span>
+        <span class="meta-value">Academic / Capstone</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">Year</span>
+        <span class="meta-value">2023 — 2024</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">Systems</span>
+        <span class="meta-value">12 Integrated</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">Platform</span>
+        <span class="meta-value">Arduino UNO</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">Interface</span>
+        <span class="meta-value">Bluetooth Mobile App</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- OVERVIEW -->
+  <section class="section">
+    <div class="section-label">Overview</div>
+    <p class="overview-text">
+      A fully integrated smart hospital automation system built on an Arduino microcontroller platform, 
+      incorporating <span class="highlight">12 independent subsystems</span> operating in real-time 
+      under a unified Bluetooth-controlled architecture. The system addresses environmental monitoring, 
+      access control, safety, lighting automation, energy management, and patient biosignal acquisition — 
+      all coordinated through a single mobile application.
+    </p>
+    <div class="callout">
+      <span class="callout-icon">💡</span>
+      <span>
+        <strong>Relevance to Smart Lighting Infrastructure:</strong> The lighting control subsystems 
+        (PIR-based occupancy detection, Ultrasonic person-counting with automated illumination, and 
+        LDR-driven solar tracking) are directly applicable to intelligent urban lighting design — 
+        the core domain of companies like Schréder.
+      </span>
+    </div>
+  </section>
+
+  <!-- SYSTEMS -->
+  <section class="section">
+    <div class="section-label">Integrated Systems</div>
+    <div class="systems-grid">
+
+      <div class="system-card featured">
+        <div class="system-num">SYSTEM 04 / 05</div>
+        <div class="system-name">Automated Lighting Control</div>
+        <div class="system-sensor">Ultrasonic HC-SR04 × 2 + PIR Sensor</div>
+        <div class="system-desc">Bidirectional entry/exit counter triggers lighting automatically. PIR detects occupancy in corridors — lights activate only when presence is confirmed.</div>
+        <div class="relevance-badge">⭐ Smart Lighting Relevance</div>
+      </div>
+
+      <div class="system-card featured">
+        <div class="system-num">SYSTEM 07</div>
+        <div class="system-name">Green Power System</div>
+        <div class="system-sensor">Solar Panel + Dual LDR + Servo Motor</div>
+        <div class="system-desc">Dual LDR-based solar tracker with servo actuation — automatically orients panel toward maximum light intensity. Drives energy-efficient LED lighting loads.</div>
+        <div class="relevance-badge">⭐ Energy Efficiency Relevance</div>
+      </div>
+
+      <div class="system-card">
+        <div class="system-num">SYSTEM 01</div>
+        <div class="system-name">Air Conditioning Control</div>
+        <div class="system-sensor">DHT11 — Temp & Humidity Sensor</div>
+        <div class="system-desc">Environmental monitoring with relay-controlled fan actuation. Triggers at threshold temperature (&gt;30°C) using analog threshold logic.</div>
+      </div>
+
+      <div class="system-card featured">
+        <div class="system-num">SYSTEM 02</div>
+        <div class="system-name">Automated Door + Garage Lighting</div>
+        <div class="system-sensor">Active IR Sensor + Servo Motor + Relay</div>
+        <div class="system-desc">IR proximity detects approaching vehicle → door opens automatically → lighting activates for a timed duration sufficient for parking → lights auto-off once driver exits. Eliminates idle lighting waste entirely.</div>
+        <div class="relevance-badge">⭐ Presence-Based Lighting</div>
+      </div>
+
+      <div class="system-card">
+        <div class="system-num">SYSTEM 03</div>
+        <div class="system-name">Fire Alarm + Suppression</div>
+        <div class="system-sensor">Flame Sensor + Buzzer + Water Pump</div>
+        <div class="system-desc">IR flame detection activates visual (LED), auditory (buzzer), and mechanical (water pump) responses simultaneously. 60° detection angle.</div>
+      </div>
+
+      <div class="system-card">
+        <div class="system-num">SYSTEM 06</div>
+        <div class="system-name">Secure Door Lock</div>
+        <div class="system-sensor">4×4 Keypad + Servo + LCD</div>
+        <div class="system-desc">Password-protected access control system with real-time LCD feedback, auditory wrong-entry alert, and reprogrammable password via keypad.</div>
+      </div>
+
+      <div class="system-card">
+        <div class="system-num">SYSTEM 07</div>
+        <div class="system-name">Water Level Detection</div>
+        <div class="system-sensor">Water Level Sensor — Hemodialysis Tanks</div>
+        <div class="system-desc">Resistive analog sensor monitors tank fill level. Automated pump activates when level drops below threshold — applied to hemodialysis water supply.</div>
+      </div>
+
+      <div class="system-card">
+        <div class="system-num">SYSTEM 08</div>
+        <div class="system-name">Suction Air / Smoke System</div>
+        <div class="system-sensor">MQ-2 Gas & Smoke Sensor</div>
+        <div class="system-desc">Metal oxide semiconductor sensor detects combustible gases (200–10,000 ppm). Triggers ventilation fan, LED indicator, and buzzer on detection.</div>
+      </div>
+
+      <div class="system-card">
+        <div class="system-num">SYSTEM 09</div>
+        <div class="system-name">Sound-Triggered Control</div>
+        <div class="system-sensor">Sound Sensor — LM393 Op-Amp</div>
+        <div class="system-desc">Adjustable sensitivity sound detection via LM393 comparator. Controls lighting state via acoustic trigger — touchless room control interface.</div>
+      </div>
+
+      <div class="system-card">
+        <div class="system-num">SYSTEM 10</div>
+        <div class="system-name">Bluetooth Mobile Control</div>
+        <div class="system-sensor">HC-06 Bluetooth Module</div>
+        <div class="system-desc">Unified wireless interface enabling real-time monitoring and control of all subsystems from a single mobile application via serial Bluetooth communication.</div>
+      </div>
+
+      <div class="system-card">
+        <div class="system-num">SYSTEM 12</div>
+        <div class="system-name">Biosignal Acquisition</div>
+        <div class="system-sensor">AD8232 ECG Sensor Module</div>
+        <div class="system-desc">Low-power (170µA) cardiac signal acquisition with instrumentation amplifier front-end. CMRR of 80dB ensures signal integrity in electrically noisy hospital environments.</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ARCHITECTURE -->
+  <section class="section">
+    <div class="section-label">System Architecture</div>
+    <div class="architecture">
+      <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap; justify-content:center;">
+        <div class="arch-cluster">
+          <div class="arch-node">Environmental Sensors<br><span style="font-size:10px;color:var(--muted)">DHT11, MQ-2, Flame, Sound</span></div>
+          <div class="arch-node">Proximity & Motion<br><span style="font-size:10px;color:var(--muted)">PIR, Ultrasonic, IR</span></div>
+          <div class="arch-node">Biosignal Sensors<br><span style="font-size:10px;color:var(--muted)">AD8232 ECG, Water Level</span></div>
+        </div>
+        <div class="arch-arrow">→</div>
+        <div class="arch-node central">Arduino UNO<br>Central Controller</div>
+        <div class="arch-arrow">→</div>
+        <div class="arch-cluster">
+          <div class="arch-node">Actuators<br><span style="font-size:10px;color:var(--muted)">Relay, Servo, Pump, Fan</span></div>
+          <div class="arch-node">Display & Alert<br><span style="font-size:10px;color:var(--muted)">LCD, LED, Buzzer</span></div>
+          <div class="arch-node">Mobile Interface<br><span style="font-size:10px;color:var(--muted)">HC-06 Bluetooth App</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TECH STACK -->
+  <section class="section">
+    <div class="section-label">Technologies & Tools</div>
+    <div style="margin-bottom: 16px;">
+      <div style="font-size:11px; color:var(--muted); letter-spacing:1px; text-transform:uppercase; margin-bottom:10px;">Hardware</div>
+      <div class="tech-row">
+        <span class="tech-pill primary">Arduino UNO</span>
+        <span class="tech-pill">DHT11</span>
+        <span class="tech-pill">PIR HC-SR501</span>
+        <span class="tech-pill">HC-SR04 Ultrasonic</span>
+        <span class="tech-pill">AD8232 ECG</span>
+        <span class="tech-pill">MQ-2 Gas Sensor</span>
+        <span class="tech-pill">HC-06 Bluetooth</span>
+        <span class="tech-pill">Solar Panel + LDR</span>
+        <span class="tech-pill">Flame Sensor</span>
+        <span class="tech-pill">5V Relay Module</span>
+        <span class="tech-pill">LCD 16×2</span>
+        <span class="tech-pill">Servo Motor SG90</span>
+      </div>
+    </div>
+    <div>
+      <div style="font-size:11px; color:var(--muted); letter-spacing:1px; text-transform:uppercase; margin-bottom:10px;">Software & Methodology</div>
+      <div class="tech-row">
+        <span class="tech-pill primary">Arduino IDE (C++)</span>
+        <span class="tech-pill">Serial Communication</span>
+        <span class="tech-pill">Bluetooth Terminal App</span>
+        <span class="tech-pill">Proteus Simulation</span>
+        <span class="tech-pill">Block Diagram Design</span>
+        <span class="tech-pill">Flowchart Logic</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- OUTCOMES -->
+  <section class="section">
+    <div class="section-label">Key Outcomes</div>
+    <ul class="outcomes-list">
+      <li>
+        <span class="outcome-icon">◆</span>
+        <span>Designed and implemented <strong>12 independently functional subsystems</strong> operating concurrently on a single Arduino UNO, demonstrating efficient resource management and interrupt-driven logic.</span>
+      </li>
+      <li>
+        <span class="outcome-icon">◆</span>
+        <span>Achieved <strong>full-system wireless control</strong> via Bluetooth mobile application, enabling unified monitoring and actuation of all subsystems from a single interface — applicable to IoT-based smart infrastructure management.</span>
+      </li>
+      <li>
+        <span class="outcome-icon">◆</span>
+        <span>Implemented <strong>occupancy-based lighting automation</strong> using PIR and Ultrasonic sensors — a technique directly applicable to energy-efficient smart street and building lighting systems.</span>
+      </li>
+      <li>
+        <span class="outcome-icon">◆</span>
+        <span>Developed a <strong>dual-axis solar tracking system</strong> using differential LDR readings, optimizing energy harvesting efficiency — aligned with sustainable smart city infrastructure goals.</span>
+      </li>
+      <li>
+        <span class="outcome-icon">◆</span>
+        <span>Applied full <strong>product development lifecycle</strong>: requirements definition, component selection and BOM costing, circuit design, prototype assembly, software development, and functional testing.</span>
+      </li>
+    </ul>
+  </section>
+
+  <!-- FOOTER -->
+  <div class="portfolio-footer">
+    <div class="author-info">
+      <span class="author-name">Seddik Masoud</span>
+      <span class="author-contact">seddikmasoud@gmail.com · linkedin.com/in/seddikmasoud</span>
+    </div>
+    <div class="project-id">PROJECT 01 / 03 · 2023–2024</div>
+  </div>
+
+</div>
+</body>
+</html>

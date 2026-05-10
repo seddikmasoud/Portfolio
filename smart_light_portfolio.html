@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Smart Adjustable Light System — Seddik Masoud</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0c10;
+    --surface: #111318;
+    --surface2: #181c24;
+    --border: #1e2430;
+    --accent: #ffd600;
+    --accent2: #ff9100;
+    --accent3: #00e676;
+    --accent4: #00e5ff;
+    --text: #e8eaf0;
+    --muted: #6b7280;
+    --card-bg: #13171f;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(255,214,0,0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,214,0,0.025) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 0 24px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ANIMATED LIGHT GLOW */
+  .light-hero-glow {
+    width: 200px;
+    height: 200px;
+    position: absolute;
+    top: -60px;
+    right: 60px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,214,0,0.12) 0%, rgba(255,145,0,0.06) 40%, transparent 70%);
+    animation: glowPulse 3s ease-in-out infinite;
+    pointer-events: none;
+  }
+
+  @keyframes glowPulse {
+    0%, 100% { transform: scale(1); opacity: 0.7; }
+    50% { transform: scale(1.2); opacity: 1; }
+  }
+
+  .hero {
+    padding: 80px 0 60px;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+  }
+
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255,214,0,0.08);
+    border: 1px solid rgba(255,214,0,0.25);
+    color: var(--accent);
+    font-size: 11px;
+    letter-spacing: 2px;
+    padding: 6px 14px;
+    border-radius: 2px;
+    text-transform: uppercase;
+    margin-bottom: 28px;
+  }
+
+  .tag::before {
+    content: '';
+    width: 6px; height: 6px;
+    background: var(--accent);
+    border-radius: 50%;
+    animation: blink 2s ease-in-out infinite;
+  }
+
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.2; }
+  }
+
+  h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(34px, 5.5vw, 58px);
+    font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -1px;
+    margin-bottom: 20px;
+  }
+
+  h1 .grad {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero-sub {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.7;
+    max-width: 580px;
+    margin-bottom: 12px;
+  }
+
+  .hero-meta {
+    display: flex;
+    gap: 32px;
+    flex-wrap: wrap;
+    margin-top: 32px;
+  }
+
+  .meta-item { display: flex; flex-direction: column; gap: 4px; }
+  .meta-label { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); }
+  .meta-value { font-size: 14px; color: var(--accent); font-weight: 500; }
+
+  /* COLOR TEMP BAR */
+  .kelvin-bar {
+    height: 8px;
+    width: 100%;
+    max-width: 400px;
+    border-radius: 4px;
+    background: linear-gradient(90deg,
+      #ff9329 0%,
+      #ffb347 20%,
+      #ffd700 40%,
+      #fff5cc 60%,
+      #f0f8ff 80%,
+      #cce8ff 100%
+    );
+    margin-top: 12px;
+    margin-bottom: 4px;
+  }
+
+  .kelvin-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 10px;
+    color: var(--muted);
+    max-width: 400px;
+    letter-spacing: 1px;
+  }
+
+  /* SECTION */
+  .section {
+    padding: 56px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .section-label {
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--accent2);
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* PRODUCTS GRID */
+  .products-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-top: 8px;
+  }
+
+  .product-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 28px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .product-card.ww-cw {
+    border-top: 3px solid var(--accent);
+  }
+
+  .product-card.rgb {
+    border-top: 3px solid transparent;
+    border-image: linear-gradient(90deg, #ff0000, #00ff00, #0000ff) 1;
+  }
+
+  .product-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 18px;
+    font-weight: 800;
+    margin-bottom: 8px;
+    color: var(--text);
+  }
+
+  .product-sub {
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+
+  .product-desc {
+    font-size: 13px;
+    color: #9ca3af;
+    line-height: 1.7;
+    margin-bottom: 16px;
+  }
+
+  .feature-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .feature-list li {
+    font-size: 12px;
+    color: #9ca3af;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    line-height: 1.5;
+  }
+
+  .feature-list li::before {
+    content: '→';
+    color: var(--accent);
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  /* RGB SWATCH */
+  .rgb-swatch {
+    display: flex;
+    gap: 4px;
+    margin-top: 16px;
+    flex-wrap: wrap;
+  }
+
+  .swatch {
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+
+  /* MODES GRID */
+  .modes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 14px;
+    margin-top: 8px;
+  }
+
+  .mode-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 18px 20px;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+
+  .mode-card:hover {
+    border-color: rgba(255,214,0,0.3);
+    transform: translateY(-2px);
+  }
+
+  .mode-icon { font-size: 20px; margin-bottom: 8px; }
+  .mode-name {
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+  .mode-temp {
+    font-size: 10px;
+    color: var(--accent);
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+  }
+  .mode-desc { font-size: 11px; color: var(--muted); line-height: 1.5; }
+
+  /* AI CALLOUT */
+  .callout {
+    margin-top: 28px;
+    padding: 20px 24px;
+    background: rgba(0,229,255,0.04);
+    border: 1px solid rgba(0,229,255,0.18);
+    border-left: 3px solid var(--accent4);
+    border-radius: 4px;
+    font-size: 13px;
+    color: #80deea;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+
+  .callout-schréder {
+    background: rgba(0,230,118,0.05);
+    border: 1px solid rgba(0,230,118,0.2);
+    border-left: 3px solid var(--accent3);
+    color: #a5d6a7;
+  }
+
+  /* HARDWARE */
+  .hw-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 14px;
+    margin-top: 8px;
+  }
+
+  .hw-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 18px;
+    transition: border-color 0.2s;
+  }
+
+  .hw-card:hover { border-color: rgba(255,214,0,0.25); }
+  .hw-card.key { border-color: rgba(255,145,0,0.3); background: rgba(255,145,0,0.04); }
+
+  .hw-num { font-size: 10px; letter-spacing: 2px; color: var(--muted); margin-bottom: 8px; }
+  .hw-name { font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+  .hw-model { font-size: 11px; color: var(--accent2); margin-bottom: 8px; }
+  .hw-desc { font-size: 11px; color: var(--muted); line-height: 1.6; }
+
+  /* BOM TABLES */
+  .bom-wrapper {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-top: 8px;
+  }
+
+  .bom-block { }
+
+  .bom-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+  }
+
+  th {
+    background: var(--surface2);
+    color: var(--muted);
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 10px 12px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+
+  td {
+    padding: 10px 12px;
+    border-bottom: 1px solid rgba(30,36,48,0.6);
+    color: #9ca3af;
+    vertical-align: top;
+  }
+
+  tr.total td {
+    color: var(--accent3);
+    font-weight: 600;
+    background: rgba(0,230,118,0.04);
+    border-bottom: none;
+  }
+
+  .proto-note {
+    margin-top: 16px;
+    padding: 14px 18px;
+    background: rgba(255,214,0,0.04);
+    border: 1px solid rgba(255,214,0,0.15);
+    border-radius: 4px;
+    font-size: 12px;
+    color: #b3a000;
+    line-height: 1.6;
+  }
+
+  /* ARCH */
+  .architecture {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 32px;
+    margin-top: 8px;
+  }
+
+  .arch-node {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    padding: 10px 16px;
+    border-radius: 4px;
+    font-size: 12px;
+    color: var(--text);
+    text-align: center;
+  }
+
+  .arch-node.central {
+    background: rgba(255,214,0,0.07);
+    border-color: rgba(255,214,0,0.3);
+    color: var(--accent);
+    font-weight: 600;
+    font-family: 'Syne', sans-serif;
+    padding: 14px 22px;
+  }
+
+  .arch-node.app {
+    background: rgba(0,229,255,0.06);
+    border-color: rgba(0,229,255,0.25);
+    color: var(--accent4);
+  }
+
+  .arch-arrow { color: var(--muted); font-size: 18px; margin: 0 8px; }
+  .arch-cluster { display: flex; flex-direction: column; gap: 8px; }
+
+  /* TECH PILLS */
+  .tech-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 8px; }
+
+  .tech-pill {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-size: 12px;
+    padding: 6px 14px;
+    border-radius: 3px;
+    letter-spacing: 0.5px;
+  }
+
+  .tech-pill.key {
+    background: rgba(255,145,0,0.08);
+    border-color: rgba(255,145,0,0.3);
+    color: #ffb74d;
+  }
+
+  /* OUTCOMES */
+  .outcomes-list { list-style: none; margin-top: 8px; }
+
+  .outcomes-list li {
+    display: flex;
+    gap: 14px;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 14px;
+    color: #9ca3af;
+    line-height: 1.6;
+    align-items: flex-start;
+  }
+
+  .outcomes-list li:last-child { border-bottom: none; }
+  .outcome-icon { color: var(--accent); font-size: 16px; flex-shrink: 0; margin-top: 2px; }
+
+  /* FOOTER */
+  .portfolio-footer {
+    padding: 40px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
+  .author-name { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 18px; }
+  .author-contact { font-size: 12px; color: var(--muted); margin-top: 4px; }
+  .project-id { font-size: 11px; color: var(--muted); letter-spacing: 2px; }
+
+  .fade-in {
+    opacity: 0;
+    transform: translateY(16px);
+    animation: fadeUp 0.6s ease forwards;
+  }
+
+  @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+  .fade-in:nth-child(1) { animation-delay: 0.1s; }
+  .fade-in:nth-child(2) { animation-delay: 0.2s; }
+  .fade-in:nth-child(3) { animation-delay: 0.3s; }
+
+  @media (max-width: 640px) {
+    .products-grid, .bom-wrapper { grid-template-columns: 1fr; }
+    .hero { padding: 48px 0 40px; }
+    .light-hero-glow { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="light-hero-glow"></div>
+    <div class="tag">Portfolio — Project 03 · Personal Initiative</div>
+    <h1 class="fade-in">Smart <span class="grad">Adjustable</span><br>Lighting System</h1>
+    <p class="hero-sub fade-in">A self-initiated smart lighting product — two hardware variants covering white-spectrum (2700K–6500K) and full-colour RGB output, controlled via mobile app with AI-driven scheduling and wellness-oriented lighting modes.</p>
+
+    <div style="margin-top:20px;">
+      <div class="kelvin-bar"></div>
+      <div class="kelvin-labels"><span>2700K — Warm White</span><span>6500K — Cool Daylight</span></div>
+    </div>
+
+    <div class="hero-meta fade-in">
+      <div class="meta-item">
+        <span class="meta-label">Type</span>
+        <span class="meta-value">Personal / R&D</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">Products</span>
+        <span class="meta-value">2 Hardware Variants</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">MCU (Prototype)</span>
+        <span class="meta-value">ESP32</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">MCU (Production)</span>
+        <span class="meta-value">BK7231 (Target)</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">Control</span>
+        <span class="meta-value">Mobile App + AI Scheduling</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- TWO PRODUCTS -->
+  <section class="section">
+    <div class="section-label">Product Variants</div>
+    <div class="products-grid">
+
+      <div class="product-card ww-cw">
+        <div class="product-title">Product 01 — WW/CW</div>
+        <div class="product-sub">Tunable White · 2700K – 6500K</div>
+        <div class="product-desc">A precision white-light bulb capable of smoothly transitioning the colour temperature across the full warm-to-cool spectrum. Two independent LED channels (Warm White + Cool White) are driven by separate MOSFET stages, enabling continuous CCT blending.</div>
+        <ul class="feature-list">
+          <li>Independent PWM control per WW and CW channel</li>
+          <li>IRF530N N-channel MOSFET per channel — low-side switching</li>
+          <li>IR2112 gate driver for reliable high-current MOSFET actuation</li>
+          <li>12V power supply — SMD LEDs on heatsinks for thermal management</li>
+        </ul>
+      </div>
+
+      <div class="product-card rgb">
+        <div class="product-title">Product 02 — WW + RGB</div>
+        <div class="product-sub">Full Colour · Millions of Colors · CRI &gt; 80</div>
+        <div class="product-desc">Advanced variant combining RGB LEDs with a dedicated Warm White channel. RGB mixing is tuned to reach high-quality cool-white output — ensuring CRI above 80 even in full-colour mode, preserving colour rendering accuracy alongside creative lighting.</div>
+        <ul class="feature-list">
+          <li>4 independent MOSFET channels: Red, Green, Blue, Warm White</li>
+          <li>RGB blending algorithm targeting CRI &gt; 80 at white output</li>
+          <li>6× 3W RGB SMD LEDs + 6× 1W WW SMD LEDs</li>
+          <li>AI-assisted colour pattern detection & adaptation</li>
+        </ul>
+        <div class="rgb-swatch">
+          <div class="swatch" style="background:#ff2020;"></div>
+          <div class="swatch" style="background:#ff6600;"></div>
+          <div class="swatch" style="background:#ffcc00;"></div>
+          <div class="swatch" style="background:#ffffff;"></div>
+          <div class="swatch" style="background:#ccf0ff;"></div>
+          <div class="swatch" style="background:#6699ff;"></div>
+          <div class="swatch" style="background:#9900ff;"></div>
+          <div class="swatch" style="background:#00cc44;"></div>
+          <div class="swatch" style="background:#ff66cc;"></div>
+          <div class="swatch" style="background:#ff9900;"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout callout-schréder" style="margin-top:20px;">
+      <span style="font-size:18px; flex-shrink:0; margin-top:1px;">💡</span>
+      <span>
+        <strong>Direct Relevance to Schréder:</strong> This project demonstrates hands-on understanding of LED driver electronics, multi-channel MOSFET switching, colour temperature management, and smart control integration — the exact technical domain of Schréder's intelligent outdoor and architectural lighting products.
+      </span>
+    </div>
+  </section>
+
+  <!-- LIGHTING MODES -->
+  <section class="section">
+    <div class="section-label">Smart Lighting Modes</div>
+    <div class="modes-grid">
+      <div class="mode-card">
+        <div class="mode-icon">🌅</div>
+        <div class="mode-name">Wake-Up Mode</div>
+        <div class="mode-temp">2700K → 5000K</div>
+        <div class="mode-desc">Gradual brightness increase synced with alarm — simulates natural sunrise to support gentle awakening.</div>
+      </div>
+      <div class="mode-card">
+        <div class="mode-icon">🎯</div>
+        <div class="mode-name">Focus Mode</div>
+        <div class="mode-temp">5500K – 6500K</div>
+        <div class="mode-desc">Bright cool-white output to enhance cognitive performance, concentration and productivity.</div>
+      </div>
+      <div class="mode-card">
+        <div class="mode-icon">📖</div>
+        <div class="mode-name">Reading Mode</div>
+        <div class="mode-temp">3500K – 4500K</div>
+        <div class="mode-desc">Warm, soft-neutral light calibrated to reduce eye strain during extended reading sessions.</div>
+      </div>
+      <div class="mode-card">
+        <div class="mode-icon">🌄</div>
+        <div class="mode-name">Morning Mode</div>
+        <div class="mode-temp">3000K → 5000K</div>
+        <div class="mode-desc">Gradual upward colour transition from warm to neutral to support natural circadian rhythm alignment.</div>
+      </div>
+      <div class="mode-card">
+        <div class="mode-icon">🌙</div>
+        <div class="mode-name">Evening Mode</div>
+        <div class="mode-temp">5000K → 2700K</div>
+        <div class="mode-desc">Smooth downward shift to deep warm tones as the day ends — promotes natural melatonin production.</div>
+      </div>
+      <div class="mode-card">
+        <div class="mode-icon">🤖</div>
+        <div class="mode-name">AI Auto Mode</div>
+        <div class="mode-temp">Adaptive</div>
+        <div class="mode-desc">Learns user behaviour patterns and automatically schedules optimal lighting throughout the day.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HARDWARE -->
+  <section class="section">
+    <div class="section-label">Hardware Architecture</div>
+    <div class="hw-grid">
+
+      <div class="hw-card key">
+        <div class="hw-num">CONTROL</div>
+        <div class="hw-name">ESP32</div>
+        <div class="hw-model">Prototype MCU · Wi-Fi + BT</div>
+        <div class="hw-desc">Main controller for prototype development. Generates multi-channel PWM signals for LED dimming and communicates with mobile app over Bluetooth. Production target: BK7231 (cost-optimised SoC).</div>
+      </div>
+
+      <div class="hw-card key">
+        <div class="hw-num">GATE DRIVER</div>
+        <div class="hw-name">IR2112</div>
+        <div class="hw-model">Half-Bridge MOSFET Driver</div>
+        <div class="hw-desc">Provides proper gate drive voltage and timing for the IRF530N MOSFETs. Ensures clean switching and protects the ESP32 GPIO pins from high-current LED loads.</div>
+      </div>
+
+      <div class="hw-card key">
+        <div class="hw-num">SWITCHING</div>
+        <div class="hw-name">IRF530N</div>
+        <div class="hw-model">N-Channel Power MOSFET</div>
+        <div class="hw-desc">High-current low-side switch per LED channel. One MOSFET per channel enables independent PWM dimming of WW, CW, R, G, B — up to 4 channels in the RGB variant.</div>
+      </div>
+
+      <div class="hw-card">
+        <div class="hw-num">EMITTERS — WW/CW</div>
+        <div class="hw-name">SMD LEDs (1W)</div>
+        <div class="hw-model">WW + CW · Per-Channel Heatsinks</div>
+        <div class="hw-desc">High-power 1W SMD emitters in warm white and cool white, mounted on individual heatsinks for thermal management at full drive current.</div>
+      </div>
+
+      <div class="hw-card">
+        <div class="hw-num">EMITTERS — RGB</div>
+        <div class="hw-name">SMD RGB LEDs (3W)</div>
+        <div class="hw-model">Full-Spectrum · High-Power</div>
+        <div class="hw-desc">3W RGB emitters enabling millions of colour combinations. Combined with the WW channel, RGB mixing is tuned to reach CRI &gt; 80 at white output.</div>
+      </div>
+
+      <div class="hw-card">
+        <div class="hw-num">POWER</div>
+        <div class="hw-name">12V Power Supply</div>
+        <div class="hw-model">Regulated DC</div>
+        <div class="hw-desc">12V regulated supply powers both the LED array and MOSFET driver circuit. ESP32 powered via onboard 3.3V regulator from the same rail.</div>
+      </div>
+
+    </div>
+
+    <!-- ARCHITECTURE DIAGRAM -->
+    <div class="architecture" style="margin-top:20px;">
+      <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap; justify-content:center;">
+        <div class="arch-cluster">
+          <div class="arch-node">12V Power Supply<br><span style="font-size:10px;color:var(--muted)">Regulated DC Input</span></div>
+          <div class="arch-node">Mobile App<br><span style="font-size:10px;color:var(--muted)">Bluetooth Control</span></div>
+        </div>
+        <div class="arch-arrow">→</div>
+        <div class="arch-node central">ESP32<br>PWM Controller</div>
+        <div class="arch-arrow">→</div>
+        <div class="arch-cluster">
+          <div class="arch-node">IR2112 Gate Driver<br><span style="font-size:10px;color:var(--muted)">Per Channel</span></div>
+        </div>
+        <div class="arch-arrow">→</div>
+        <div class="arch-cluster">
+          <div class="arch-node">IRF530N MOSFET<br><span style="font-size:10px;color:var(--muted)">High-Current Switch</span></div>
+        </div>
+        <div class="arch-arrow">→</div>
+        <div class="arch-cluster">
+          <div class="arch-node app">WW / CW / R / G / B<br><span style="font-size:10px;color:var(--muted)">LED Array Output</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BOM -->
+  <section class="section">
+    <div class="section-label">BOM & Cost Analysis — Prototype</div>
+    <div class="bom-wrapper">
+
+      <div class="bom-block">
+        <div class="bom-title">Shared Components</div>
+        <table>
+          <thead>
+            <tr><th>Component</th><th>Cost (EGP)</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>ESP32 MCU</td><td>275</td></tr>
+            <tr><td>Breadboard (Prototype)</td><td>35</td></tr>
+            <tr class="total"><td><strong>Shared Total</strong></td><td><strong>310</strong></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="bom-block">
+        <div class="bom-title">Product 01 — WW/CW Only</div>
+        <table>
+          <thead>
+            <tr><th>Component</th><th>Cost (EGP)</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>4× SMD LED WW (1W)</td><td>10</td></tr>
+            <tr><td>4× SMD LED CW (1W)</td><td>10</td></tr>
+            <tr><td>8× Heatsink</td><td>20</td></tr>
+            <tr><td>2× IRF530N MOSFET</td><td>36</td></tr>
+            <tr><td>1× IR2112 Gate Driver</td><td>85</td></tr>
+            <tr class="total"><td><strong>Product 01 Total</strong></td><td><strong>161 EGP</strong></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="bom-block">
+        <div class="bom-title">Product 02 — WW + RGB Full Colour</div>
+        <table>
+          <thead>
+            <tr><th>Component</th><th>Cost (EGP)</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>6× SMD RGB LED (3W)</td><td>54</td></tr>
+            <tr><td>6× SMD LED WW (1W)</td><td>15</td></tr>
+            <tr><td>12× Heatsink</td><td>30</td></tr>
+            <tr><td>4× IRF530N MOSFET</td><td>72</td></tr>
+            <tr><td>2× IR2112 Gate Driver</td><td>170</td></tr>
+            <tr class="total"><td><strong>Product 02 Total</strong></td><td><strong>341 EGP</strong></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="bom-block">
+        <div class="bom-title">Production Roadmap</div>
+        <table>
+          <thead>
+            <tr><th>Item</th><th>Note</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>MCU: ESP32 → BK7231</td><td>~60% cost reduction on controller</td></tr>
+            <tr><td>Custom PCB</td><td>Replace breadboard prototype</td></tr>
+            <tr><td>Integrated driver IC</td><td>Consolidate gate driver stages</td></tr>
+            <tr><td>Enclosure design</td><td>Standard bulb form factor</td></tr>
+            <tr class="total"><td><strong>Goal</strong></td><td><strong>Market-ready product</strong></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+
+    <div class="proto-note">
+      ⚠ Prototype pricing — components sourced for functional validation, not mass production. Industrial BOM would use a cost-optimised SoC (BK7231) and consolidated PCB, significantly reducing per-unit cost.
+    </div>
+  </section>
+
+  <!-- TECH STACK -->
+  <section class="section">
+    <div class="section-label">Technologies & Tools</div>
+    <div style="margin-bottom:16px;">
+      <div style="font-size:11px; color:var(--muted); letter-spacing:1px; text-transform:uppercase; margin-bottom:10px;">Hardware</div>
+      <div class="tech-row">
+        <span class="tech-pill key">ESP32</span>
+        <span class="tech-pill key">IRF530N MOSFET</span>
+        <span class="tech-pill key">IR2112 Gate Driver</span>
+        <span class="tech-pill">SMD LEDs (WW / CW / RGB)</span>
+        <span class="tech-pill">12V DC Power Supply</span>
+        <span class="tech-pill">Heatsink Array</span>
+        <span class="tech-pill">BK7231 (Production Target)</span>
+      </div>
+    </div>
+    <div>
+      <div style="font-size:11px; color:var(--muted); letter-spacing:1px; text-transform:uppercase; margin-bottom:10px;">Software & Concepts</div>
+      <div class="tech-row">
+        <span class="tech-pill key">Multi-Channel PWM Control</span>
+        <span class="tech-pill key">Mobile App Integration</span>
+        <span class="tech-pill">AI Scheduling Algorithm</span>
+        <span class="tech-pill">Colour Temperature Mixing</span>
+        <span class="tech-pill">CRI Optimisation</span>
+        <span class="tech-pill">BOM Costing</span>
+        <span class="tech-pill">Prototype-to-Production Planning</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- OUTCOMES -->
+  <section class="section">
+    <div class="section-label">Key Outcomes</div>
+    <ul class="outcomes-list">
+      <li>
+        <span class="outcome-icon">◆</span>
+        <span>Designed and built <strong>two distinct LED driver hardware variants</strong> (WW/CW and WW+RGB), each with independent multi-channel MOSFET switching — demonstrating practical power electronics and LED driver design capability.</span>
+      </li>
+      <li>
+        <span class="outcome-icon">◆</span>
+        <span>Achieved <strong>CRI &gt; 80 using RGB + WW mixing strategy</strong> — going beyond simple colour output to ensure professionally-acceptable colour rendering, aligned with industry-standard lighting quality metrics.</span>
+      </li>
+      <li>
+        <span class="outcome-icon">◆</span>
+        <span>Defined a <strong>production-ready roadmap</strong> — identifying the BK7231 as a cost-optimised MCU replacement for the ESP32 prototype, and planning PCB consolidation and enclosure design for market viability.</span>
+      </li>
+      <li>
+        <span class="outcome-icon">◆</span>
+        <span>Implemented <strong>AI-assisted user pattern detection</strong> for adaptive scheduling — matching the direction of Schréder's intelligent outdoor lighting control systems that adapt to real-world usage patterns.</span>
+      </li>
+      <li>
+        <span class="outcome-icon">◆</span>
+        <span>Developed <strong>wellness-driven lighting modes</strong> (Wake-Up, Focus, Reading, Evening) — demonstrating understanding of human-centric lighting design, a key value proposition in premium smart lighting products.</span>
+      </li>
+      <li>
+        <span class="outcome-icon">◆</span>
+        <span>Executed <strong>full self-directed product development lifecycle</strong> — from concept and component selection, through BOM costing, prototype assembly, firmware development, and production migration planning — with no institutional structure or deadline.</span>
+      </li>
+    </ul>
+  </section>
+
+  <!-- INDUSTRIAL ADOPTION -->
+  <section class="section">
+    <div class="section-label">Industrial Adoption</div>
+
+    <div style="background: rgba(0,230,118,0.05); border: 1px solid rgba(0,230,118,0.25); border-left: 3px solid var(--accent3); border-radius: 6px; padding: 28px; margin-bottom: 20px;">
+      <div style="display:flex; align-items:center; gap:12px; margin-bottom:16px;">
+        <span style="font-size:22px;">🏭</span>
+        <div>
+          <div style="font-family:'Syne',sans-serif; font-size:16px; font-weight:700; color:var(--accent3);">Adopted at EISAC Automation — Cairo, Egypt</div>
+          <div style="font-size:11px; color:var(--muted); letter-spacing:1px; text-transform:uppercase; margin-top:3px;">From Personal R&D → Commercial Application</div>
+        </div>
+      </div>
+      <p style="font-size:14px; color:#9ca3af; line-height:1.8; max-width:720px;">
+        Following the successful prototype, the LED driver design was further developed and 
+        <strong style="color:var(--accent3);">adopted internally at EISAC Automation</strong> for use in their own operational infrastructure. 
+        The decision to build rather than purchase delivered direct cost savings for the company — 
+        replacing an off-the-shelf solution with a locally engineered, purpose-built alternative at 
+        significantly lower cost.
+      </p>
+    </div>
+
+    <div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:14px;">
+      <div style="background:var(--card-bg); border:1px solid var(--border); border-radius:6px; padding:20px;">
+        <div style="font-size:10px; letter-spacing:2px; color:var(--muted); text-transform:uppercase; margin-bottom:8px;">Impact</div>
+        <div style="font-family:'Syne',sans-serif; font-size:15px; font-weight:700; color:var(--text); margin-bottom:6px;">Cost Reduction</div>
+        <div style="font-size:12px; color:#9ca3af; line-height:1.6;">In-house LED driver replaced a commercially purchased unit, generating direct savings for EISAC's operational budget.</div>
+      </div>
+      <div style="background:var(--card-bg); border:1px solid var(--border); border-radius:6px; padding:20px;">
+        <div style="font-size:10px; letter-spacing:2px; color:var(--muted); text-transform:uppercase; margin-bottom:8px;">Scope</div>
+        <div style="font-family:'Syne',sans-serif; font-size:15px; font-weight:700; color:var(--text); margin-bottom:6px;">Further Development</div>
+        <div style="font-size:12px; color:#9ca3af; line-height:1.6;">Prototype was iterated and refined for industrial deployment, demonstrating design adaptability beyond the initial R&D phase.</div>
+      </div>
+      <div style="background:var(--card-bg); border:1px solid var(--border); border-radius:6px; padding:20px;">
+        <div style="font-size:10px; letter-spacing:2px; color:var(--muted); text-transform:uppercase; margin-bottom:8px;">Significance</div>
+        <div style="font-family:'Syne',sans-serif; font-size:15px; font-weight:700; color:var(--text); margin-bottom:6px;">Real-World Validation</div>
+        <div style="font-size:12px; color:#9ca3af; line-height:1.6;">Personal initiative evolved into a production-used solution — confirming the engineering quality and commercial viability of the design.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <div class="portfolio-footer">
+    <div>
+      <div class="author-name">Seddik Masoud</div>
+      <div class="author-contact">seddikmasoud@gmail.com · linkedin.com/in/seddikmasoud</div>
+    </div>
+    <div class="project-id">PROJECT 03 / 03 · 2024–2025</div>
+  </div>
+
+</div>
+</body>
+</html>
